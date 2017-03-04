@@ -1,0 +1,88 @@
+#!/usr/bin/tclsh
+
+set ansi(bold) {\[\e[1m\]}
+set ansi(inverse1) {\[\e[7m\]}
+set ansi(inverse0) {\[\e[27m\]}
+set ansi(reset) {\[\e[0m\]}
+set ansi(fgreset) {\[\e[39m\]}
+set ansi(fg0) {\[\e[30m\]}
+set ansi(fg1) {\[\e[31m\]}
+set ansi(fg2) {\[\e[32m\]}
+set ansi(fg3) {\[\e[33m\]}
+set ansi(fg4) {\[\e[34m\]}
+set ansi(fg5) {\[\e[35m\]}
+set ansi(fg6) {\[\e[36m\]}
+set ansi(fg7) {\[\e[37m\]}
+set ansi(fg8) {\[\e[90m\]}
+set ansi(fg9) {\[\e[91m\]}
+set ansi(fg10) {\[\e[92m\]}
+set ansi(fg11) {\[\e[93m\]}
+set ansi(fg12) {\[\e[94m\]}
+set ansi(fg13) {\[\e[95m\]}
+set ansi(fg14) {\[\e[96m\]}
+set ansi(fg15) {\[\e[97m\]}
+set ansi(bgreset) {\[\e[49m\]}
+set ansi(bg0) {\[\e[40m\]}
+set ansi(bg1) {\[\e[41m\]}
+set ansi(bg2) {\[\e[42m\]}
+set ansi(bg3) {\[\e[43m\]}
+set ansi(bg4) {\[\e[44m\]}
+set ansi(bg5) {\[\e[45m\]}
+set ansi(bg6) {\[\e[46m\]}
+set ansi(bg7) {\[\e[47m\]}
+set ansi(bg8) {\[\e[100m\]}
+set ansi(bg9) {\[\e[101m\]}
+set ansi(bg10) {\[\e[102m\]}
+set ansi(bg11) {\[\e[103m\]}
+set ansi(bg12) {\[\e[104m\]}
+set ansi(bg13) {\[\e[105m\]}
+set ansi(bg14) {\[\e[106m\]}
+set ansi(bg15) {\[\e[107m\]}
+
+set icons(cli) "\ue7a2"
+set icons(powerline) "\ue0bc"
+set icons(powerline2) "\ue0bd"
+set icons(bolt) "\uf0e7"
+set icons(bolt2) "\u26a1"
+set icons(host) "\uf108"
+set icons(date) "\uf073"
+set icons(time) "\uf017"
+set icons(dir) "\uf0a0"
+
+set bg(cli) $ansi(bg8)
+set bgi(cli) $ansi(fg8)
+set fg(cli) $ansi(fg14)
+set fg(cliroot) $ansi(fg2)
+set bg(host) $ansi(bg13)
+set bgi(host) $ansi(fg13)
+set fg(host) $ansi(fg8)
+set bg(hostroot) $ansi(bg0)
+set bgi(hostroot) $ansi(fg0)
+set fg(hostroot) $ansi(fg2)
+set bg(date) $ansi(bg6)
+set bgi(date) $ansi(fg6)
+set fg(date) $ansi(fg8)
+set bg(time) $ansi(bg14)
+set bgi(time) $ansi(fg14)
+set fg(time) $ansi(fg8)
+set bg(dir) $ansi(bg9)
+set bgi(dir) $ansi(fg9)
+set fg(dir) $ansi(fg0)
+
+if {$tcl_platform(user) eq "root"} {
+  set fg(cli) $fg(cliroot)
+  set bg(host) $bg(hostroot)
+  set bgi(host) $bgi(hostroot)
+  set fg(host) $fg(hostroot)
+}
+
+#puts -nonewline {\[\e[0;37;41m\] \d \[\e[7;32m\]\[\e[0;30;42m\] \l \[\e[7;34m\]\[\e[0;37;44m\] \W \[\e[0;34m\]\[\e[0m\] }
+set now [clock seconds]
+append prompt "$bg(cli)  $bgi(cli)"
+append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) \\h $bgi(host)"
+append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $bgi(date)"
+append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $bgi(time)"
+append prompt "$bg(dir)$icons(powerline)$fg(dir) $icons(dir) \\W $bgi(dir)"
+append prompt "$ansi(bgreset)$icons(powerline)\n"
+append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$bgi(cli)$icons(powerline)$ansi(fgreset) "
+puts -nonewline $prompt
