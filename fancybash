@@ -6,9 +6,6 @@ proc colors {idx bg fg} {
   set ::fg($idx) $::ansi(fg$fg)
 }
 
-set ansi(bold) {\[\e[1m\]}
-set ansi(inverse1) {\[\e[7m\]}
-set ansi(inverse0) {\[\e[27m\]}
 set ansi(reset) {\[\e[0m\]}
 set ansi(fgreset) {\[\e[39m\]}
 set ansi(fg0) {\[\e[30m\]}
@@ -65,6 +62,8 @@ colors dir 14 8
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
+  set fgi(cli) $fgi(cliroot)
+  set bg(cli) $bg(cliroot)
   set bg(host) $bg(hostroot)
   set fgi(host) $fgi(hostroot)
   set fg(host) $fg(hostroot)
