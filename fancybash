@@ -50,7 +50,7 @@ set ansi(bg14) {\[\e[106m\]}
 set ansi(bg15) {\[\e[107m\]}
 
 set srcpath [info script]
-source "[string range $srcpath 0 [expr [string last fancybash $srcpath]-1]]themes/[lindex $argv 0]"
+source "[string range $srcpath 0 [string last fancybash $srcpath]-1]themes/[lindex $argv 0]"
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
@@ -66,9 +66,9 @@ set maxpathwidth [expr $width-[string length $hostname]-42]
 set path [pwd]
 set dir [lindex [split $path "/"] end]
 if {[string length $dir] > $maxpathwidth} {
-  set path "[string range $dir 0 [expr $maxpathwidth-4]]..."
+  set path "[string range $dir 0 $maxpathwidth-4]..."
 } elseif {[string length $path] > $maxpathwidth} {
-  if {[string length $dir] > [expr $maxpathwidth-4]} {
+  if {[string length $dir] > $maxpathwidth-4} {
     set path $dir
   } else {
     set path [string map [list / $icons(powerline2)] "...[string range $path end-[expr $maxpathwidth-4] end]"]
