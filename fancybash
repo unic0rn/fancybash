@@ -50,7 +50,7 @@ set icons(bolt2) "\u26a1"
 set icons(host) "\uf108"
 set icons(date) "\uf073"
 set icons(time) "\uf017"
-set icons(dir) "\uf0a0"
+set icons(path) "\uf0a0"
 
 colors cli 8 14
 colors cliroot 8 2
@@ -58,7 +58,7 @@ colors host 13 8
 colors hostroot 0 2
 colors date 10 14
 colors time 6 8
-colors dir 14 8
+colors path 14 8
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
@@ -72,17 +72,26 @@ if {$tcl_platform(user) eq "root"} {
 set hostname [lindex [split [exec hostname] "."] 0]
 set now [clock seconds]
 set width [lindex [exec stty size] 1]
-set maxdirwidth [expr $width-[string length $hostname]-42]
-set dir [lindex [split [pwd] "/"] end]
-if {[string length $dir] > $maxdirwidth} {
-  set dir "[string range $dir 0 [expr $maxdirwidth-4]]..."
+set maxpathwidth [expr $width-[string length $hostname]-42]
+set path [pwd]
+set dir [lindex [split $path "/"] end]
+if {[string length $dir] > $maxpathwidth} {
+  set path "[string range $dir 0 [expr $maxpathwidth-4]]..."
+} elseif {[string length $path] > $maxpathwidth} {
+  if {[string length $dir] > [expr $maxpathwidth-4]} {
+    set path $dir
+  } else {
+    set path [string map [list / $icons(powerline2)] "...[string range $path end-[expr $maxpathwidth-4] end]"]
+  }
+} else {
+  set path [string map [list / $icons(powerline2)] $path]
 }
 
 append prompt "$bg(cli)  $fgi(cli)"
 append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) $hostname $fgi(host)"
 append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $fgi(date)"
 append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $fgi(time)"
-append prompt "$bg(dir)$icons(powerline)$fg(dir) $icons(dir) $dir $fgi(dir)"
+append prompt "$bg(path)$icons(powerline)$fg(path) $icons(path) $path $fgi(path)"
 append prompt "$ansi(bgreset)$icons(powerline)\n"
 append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$fgi(cli)$icons(powerline)$ansi(fgreset) "
 puts -nonewline $prompt
