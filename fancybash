@@ -1,9 +1,16 @@
 #!/usr/bin/tclsh
 
-proc colors {idx bg fg} {
-  set ::bg($idx) $::ansi(bg$bg)
-  set ::fgi($idx) $::ansi(fg$bg)
-  set ::fg($idx) $::ansi(fg$fg)
+proc color {idx cmd c} {
+  if {$cmd eq "bg"} {
+    set ::bg($idx) $::ansi(bg$c)
+    set ::fgi($idx) $::ansi(fg$c)
+  } elseif {$cmd eq "fg"} {
+    set ::fg($idx) $::ansi(fg$c)
+  }
+}
+
+proc icon {idx i} {
+  set ::icons($idx) $i
 }
 
 set ansi(reset) {\[\e[0m\]}
@@ -42,28 +49,32 @@ set ansi(bg13) {\[\e[105m\]}
 set ansi(bg14) {\[\e[106m\]}
 set ansi(bg15) {\[\e[107m\]}
 
-set icons(cli) "\ue7a2"
-set icons(powerline) "\ue0bc"
-set icons(powerline2) "\ue0bd"
-set icons(bolt) "\uf0e7"
-set icons(bolt2) "\u26a1"
-set icons(host) "\uf108"
-set icons(date) "\uf073"
-set icons(time) "\uf017"
-set icons(path) "\uf0a0"
+icon cli "\ue7a2"
+icon powerline "\ue0bc"
+icon powerline2 "\ue0bd"
+icon bolt "\uf0e7"
+icon bolt2 "\u26a1"
+icon host "\uf108"
+icon date "\uf073"
+icon time "\uf017"
+icon path "\uf0a0"
 
-colors cli 8 14
-colors cliroot 8 2
-colors host 13 8
-colors hostroot 0 2
-colors date 10 14
-colors time 6 8
-colors path 14 8
+color cli bg 8
+color cli fg 14
+color cliroot fg 2
+color host bg 13
+color host fg 8
+color hostroot bg 0
+color hostroot fg 2
+color date bg 10
+color date fg 14
+color time bg 6
+color time fg 8
+color path bg 14
+color path fg 8
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
-  set fgi(cli) $fgi(cliroot)
-  set bg(cli) $bg(cliroot)
   set bg(host) $bg(hostroot)
   set fgi(host) $fgi(hostroot)
   set fg(host) $fg(hostroot)
