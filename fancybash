@@ -49,29 +49,7 @@ set ansi(bg13) {\[\e[105m\]}
 set ansi(bg14) {\[\e[106m\]}
 set ansi(bg15) {\[\e[107m\]}
 
-icon cli e7a2
-icon powerline e0bc
-icon powerline2 e0bd
-icon bolt f0e7
-icon bolt2 26a1
-icon host f108
-icon date f073
-icon time f017
-icon path f0a0
-
-color cli bg 8
-color cli fg 14
-color cliroot fg 2
-color host bg 13
-color host fg 8
-color hostroot bg 0
-color hostroot fg 2
-color date bg 10
-color date fg 14
-color time bg 6
-color time fg 8
-color path bg 14
-color path fg 8
+source "[string map {fancybash themes/} [info script]][lindex $argv 0]"
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
@@ -80,7 +58,7 @@ if {$tcl_platform(user) eq "root"} {
   set fg(host) $fg(hostroot)
 }
 
-set hostname [lindex [split [exec hostname] "."] 0]
+set hostname [lindex [split [info hostname] "."] 0]
 set now [clock seconds]
 set width [lindex [exec stty size] 1]
 set maxpathwidth [expr $width-[string length $hostname]-42]

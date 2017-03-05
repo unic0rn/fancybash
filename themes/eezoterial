@@ -1,0 +1,23 @@
+icon cli e7a2
+icon powerline e0bc
+icon powerline2 e0bd
+icon bolt f0e7
+icon bolt2 26a1
+icon host f108
+icon date f073
+icon time f017
+icon path f0a0
+
+color cli bg 8
+color cli fg 14
+color cliroot fg 2
+color host bg 13
+color host fg 8
+color hostroot bg 0
+color hostroot fg 2
+color date bg 10
+color date fg 14
+color time bg 6
+color time fg 8
+color path bg 14
+color path fg 8
