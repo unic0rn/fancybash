@@ -1,5 +1,11 @@
 #!/usr/bin/tclsh
 
+proc colors {idx bg fg} {
+  set ::bg($idx) $::ansi(bg$bg)
+  set ::fgi($idx) $::ansi(fg$bg)
+  set ::fg($idx) $::ansi(fg$fg)
+}
+
 set ansi(bold) {\[\e[1m\]}
 set ansi(inverse1) {\[\e[7m\]}
 set ansi(inverse0) {\[\e[27m\]}
@@ -49,40 +55,35 @@ set icons(date) "\uf073"
 set icons(time) "\uf017"
 set icons(dir) "\uf0a0"
 
-set bg(cli) $ansi(bg8)
-set bgi(cli) $ansi(fg8)
-set fg(cli) $ansi(fg14)
-set fg(cliroot) $ansi(fg2)
-set bg(host) $ansi(bg13)
-set bgi(host) $ansi(fg13)
-set fg(host) $ansi(fg8)
-set bg(hostroot) $ansi(bg0)
-set bgi(hostroot) $ansi(fg0)
-set fg(hostroot) $ansi(fg2)
-set bg(date) $ansi(bg6)
-set bgi(date) $ansi(fg6)
-set fg(date) $ansi(fg8)
-set bg(time) $ansi(bg14)
-set bgi(time) $ansi(fg14)
-set fg(time) $ansi(fg8)
-set bg(dir) $ansi(bg9)
-set bgi(dir) $ansi(fg9)
-set fg(dir) $ansi(fg0)
+colors cli 8 14
+colors cliroot 8 2
+colors host 13 8
+colors hostroot 0 2
+colors date 10 14
+colors time 6 8
+colors dir 14 8
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
   set bg(host) $bg(hostroot)
-  set bgi(host) $bgi(hostroot)
+  set fgi(host) $fgi(hostroot)
   set fg(host) $fg(hostroot)
 }
 
-#puts -nonewline {\[\e[0;37;41m\] \d \[\e[7;32m\]\[\e[0;30;42m\] \l \[\e[7;34m\]\[\e[0;37;44m\] \W \[\e[0;34m\]\[\e[0m\] }
+set hostname [lindex [split [exec hostname] "."] 0]
 set now [clock seconds]
-append prompt "$bg(cli)  $bgi(cli)"
-append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) \\h $bgi(host)"
-append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $bgi(date)"
-append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $bgi(time)"
-append prompt "$bg(dir)$icons(powerline)$fg(dir) $icons(dir) \\W $bgi(dir)"
+set width [lindex [exec stty size] 1]
+set maxdirwidth [expr $width-[string length $hostname]-42]
+set dir [lindex [split [pwd] "/"] end]
+if {[string length $dir] > $maxdirwidth} {
+  set dir "[string range $dir 0 [expr $maxdirwidth-4]]..."
+}
+
+append prompt "$bg(cli)  $fgi(cli)"
+append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) $hostname $fgi(host)"
+append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $fgi(date)"
+append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $fgi(time)"
+append prompt "$bg(dir)$icons(powerline)$fg(dir) $icons(dir) $dir $fgi(dir)"
 append prompt "$ansi(bgreset)$icons(powerline)\n"
-append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$bgi(cli)$icons(powerline)$ansi(fgreset) "
+append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$fgi(cli)$icons(powerline)$ansi(fgreset) "
 puts -nonewline $prompt
