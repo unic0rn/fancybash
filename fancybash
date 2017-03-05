@@ -49,15 +49,15 @@ set ansi(bg13) {\[\e[105m\]}
 set ansi(bg14) {\[\e[106m\]}
 set ansi(bg15) {\[\e[107m\]}
 
-icon cli "\ue7a2"
-icon powerline "\ue0bc"
-icon powerline2 "\ue0bd"
-icon bolt "\uf0e7"
-icon bolt2 "\u26a1"
-icon host "\uf108"
-icon date "\uf073"
-icon time "\uf017"
-icon path "\uf0a0"
+icon cli \ue7a2
+icon powerline \ue0bc
+icon powerline2 \ue0bd
+icon bolt \uf0e7
+icon bolt2 \u26a1
+icon host \uf108
+icon date \uf073
+icon time \uf017
+icon path \uf0a0
 
 color cli bg 8
 color cli fg 14
