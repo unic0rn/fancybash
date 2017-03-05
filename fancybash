@@ -92,6 +92,6 @@ append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) $hostname $fgi(h
 append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $fgi(date)"
 append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $fgi(time)"
 append prompt "$bg(path)$icons(powerline)$fg(path) $icons(path) $path $fgi(path)"
-append prompt "$ansi(bgreset)$icons(powerline)\n"
+append prompt "$ansi(bgreset)$icons(powerline)\\n"
 append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$fgi(cli)$icons(powerline)$ansi(fgreset) "
 puts -nonewline $prompt
