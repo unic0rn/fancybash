@@ -161,29 +161,19 @@ if {$gitrepo} {
     set fg(gitcommitslash2) $fg(gitcommitcounters)
   }
   if {$untracked == 0} {
-    set untracked "---"
-  } else {
-    set untracked [format %03u $untracked]
+    set untracked "-"
   }
   if {$modified == 0} {
-    set modified "---"
-  } else {
-    set modified [format %03u $modified]
+    set modified "-"
   }
   if {$deleted == 0} {
-    set deleted "---"
-  } else {
-    set deleted [format %03u $deleted]
+    set deleted "-"
   }
   if {$cachedplus == 0} {
-    set cachedplus "---"
-  } else {
-    set cachedplus [format %03u $cachedplus]
+    set cachedplus "-"
   }
   if {$cachedminus == 0} {
-    set cachedminus "---"
-  } else {
-    set cachedminus [format %03u $cachedminus]
+    set cachedminus "-"
   }
 }
 
@@ -191,15 +181,15 @@ append prompt "$ansi(reset)"
 if {$gitrepo} {
   append prompt "$bg(cli)$fg(cli)$icons(git)  $fgi(cli)"
   append prompt "$bg(gitlocal)$icons(powerline)"
-  append prompt " $fg(gituntracked)$icons(gituntracked) $fg(gituntrackedc)$untracked"
+  append prompt " $fg(gituntracked)$icons(gituntracked)$fg(gituntrackedc)$untracked"
   append prompt " $fg(gitlocalcounters)$icons(powerline2)"
-  append prompt " $fg(gitmodified)$icons(gitmodified) $fg(gitmodifiedc)$modified"
+  append prompt " $fg(gitmodified)$icons(gitmodified)$fg(gitmodifiedc)$modified"
   append prompt " $fg(gitlocalcounters)$icons(powerline2)"
-  append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
+  append prompt " $fg(gitdeleted)$icons(gitdeleted)$fg(gitdeletedc)$deleted $fgi(gitlocal)"
   append prompt "$bg(gitcommit)$icons(powerline)"
-  append prompt " $fg(gitcachedplus)$icons(gitcachedplus) $fg(gitcachedplusc)$cachedplus"
+  append prompt " $fg(gitcachedplus)$icons(gitcachedplus)$fg(gitcachedplusc)$cachedplus"
   append prompt " $fg(gitcommitslash1)$icons(powerline2)"
-  append prompt " $fg(gitcachedminus)$icons(gitcachedminus) $fg(gitcachedminusc)$cachedminus"
+  append prompt " $fg(gitcachedminus)$icons(gitcachedminus)$fg(gitcachedminusc)$cachedminus"
   append prompt " $fg(gitcommitslash2)$icons(powerline2)"
   append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
   append prompt "$bg(gitremote)$icons(powerline)"
