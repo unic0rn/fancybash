@@ -105,6 +105,8 @@ if {$gitrepo} {
   set fg(gitcachedminusc) $fg(gitcommitoff)
   set cachedminus 0
   set fg(gitcommit) $fg(gitcommitoff)
+  set fg(gitcommitslash1) $fg(gitcommitoff)
+  set fg(gitcommitslash2) $fg(gitcommitoff)
 
   if {!$fresh} {
     set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
@@ -148,13 +150,17 @@ if {$gitrepo} {
   if {$cachedplus > 0} {
     set fg(gitcachedplus) $fg(gitcommitcached)
     set fg(gitcachedplusc) $fg(gitcommitcounters)
+    set fg(gitcommitslash1) $fg(gitcommitcounters)
   }
   if {$cachedminus > 0} {
     set fg(gitcachedminus) $fg(gitcommitcached)
     set fg(gitcachedminusc) $fg(gitcommitcounters)
+    set fg(gitcommitslash1) $fg(gitcommitcounters)
+    set fg(gitcommitslash2) $fg(gitcommitcounters)
   }
   if {$untracked == 0 && $modified == 0 && $deleted == 0 && ($cachedplus > 0 || $cachedminus > 0)} {
     set fg(gitcommit) $fg(gitcommitready)
+    set fg(gitcommitslash2) $fg(gitcommitcounters)
   }
   set untracked [format %03u $untracked]
   set modified [format %03u $modified]
@@ -174,9 +180,9 @@ if {$gitrepo} {
   append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
   append prompt "$bg(gitcommit)$icons(powerline)"
   append prompt " $fg(gitcachedplus)$icons(gitcachedplus) $fg(gitcachedplusc)$cachedplus"
-  append prompt " $fg(gitcommitcounters)$icons(powerline2)"
+  append prompt " $fg(gitcommitslash1)$icons(powerline2)"
   append prompt " $fg(gitcachedminus)$icons(gitcachedminus) $fg(gitcachedminusc)$cachedminus"
-  append prompt " $fg(gitcommitcounters)$icons(powerline2)"
+  append prompt " $fg(gitcommitslash2)$icons(powerline2)"
   append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
   append prompt "$bg(gitremote)$icons(powerline)"
 
