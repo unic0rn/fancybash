@@ -160,11 +160,31 @@ if {$gitrepo} {
     set fg(gitcommit) $fg(gitcommitready)
     set fg(gitcommitslash2) $fg(gitcommitcounters)
   }
-  set untracked [format %03u $untracked]
-  set modified [format %03u $modified]
-  set deleted [format %03u $deleted]
-  set cachedplus [format %03u $cachedplus]
-  set cachedminus [format %03u $cachedminus]
+  if {$untracked == 0} {
+    set untracked "---"
+  } else {
+    set untracked [format %03u $untracked]
+  }
+  if {$modified == 0} {
+    set modified "---"
+  } else {
+    set modified [format %03u $modified]
+  }
+  if {$deleted == 0} {
+    set deleted "---"
+  } else {
+    set deleted [format %03u $deleted]
+  }
+  if {$cachedplus == 0} {
+    set cachedplus "---"
+  } else {
+    set cachedplus [format %03u $cachedplus]
+  }
+  if {$cachedminus == 0} {
+    set cachedminus "---"
+  } else {
+    set cachedminus [format %03u $cachedminus]
+  }
 }
 
 append prompt "$ansi(reset)"
