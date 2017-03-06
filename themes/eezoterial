@@ -14,7 +14,7 @@ icon gitmodified f040
 icon gitdeleted f00d
 icon gitcachedplus f067
 icon gitcachedminus f068
-icon gitcommit f08b
+icon gitcommit f090
 
 color cli bg 8
 color cli fg 14
@@ -35,6 +35,7 @@ color gitlocalcounters fg 10
 color gitlocalicons fg 8
 color gitcommit bg 0
 color gitcommitoff fg 8
-color gitcommitcache fg 4
+color gitcommitcached fg 4
 color gitcommitcounters fg 5
-color gitcommit fg 2
+color gitcommitready fg 2
+color gitremote bg 10

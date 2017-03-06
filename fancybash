@@ -88,7 +88,7 @@ if {$hash ne "child process exited abnormally"} {
 }
 if {$gitrepo} {
   catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
-  set fresh [catch {git log --pretty=oneline -n1 >&/dev/null}]
+  set fresh [catch {exec git log --pretty=oneline -n1 >&/dev/null}]
   set fg(gituntracked) $fg(gitlocaloff)
   set fg(gituntrackedc) $fg(gitlocaloff)
   set untracked 0
@@ -98,10 +98,69 @@ if {$gitrepo} {
   set fg(gitdeleted) $fg(gitlocaloff)
   set fg(gitdeletedc) $fg(gitlocaloff)
   set deleted 0
+  set fg(gitcachedplus) $fg(gitcommitoff)
+  set fg(gitcachedplusc) $fg(gitcommitoff)
+  set cachedplus 0
+  set fg(gitcachedminus) $fg(gitcommitoff)
+  set fg(gitcachedminusc) $fg(gitcommitoff)
+  set cachedminus 0
+  set fg(gitcommit) $fg(gitcommitoff)
+
+  if {!$fresh} {
+    set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
+    if {$hasupstream && $upstream eq "@{upstream}"} {
+      set hasupstream 0
+    }
+    catch {exec git status --porcelain 2>/dev/null} status
+    set slines [split $status "\n"]
+    foreach f $slines {
+      set x [string index $f 0]
+      set y [string index $f 1]
+      if {"$x$y" eq "??"} {
+        incr untracked
+      } else {
+        if {$y eq "M"} {
+          incr modified
+        } elseif {$y eq "D"} {
+          incr deleted
+        }
+        if {$x eq "A" || $x eq "M"} {
+          incr cachedplus
+        } elseif {$x eq "D"} {
+          incr cachedminus
+        }
+      }
+    }
+  }
   
+  if {$untracked > 0} {
+    set fg(gituntracked) $fg(gitlocalicons)
+    set fg(gituntrackedc) $fg(gitlocalcounters)
+  }
+  if {$modified > 0} {
+    set fg(gitmodified) $fg(gitlocalicons)
+    set fg(gitmodifiedc) $fg(gitlocalcounters)
+  }
+  if {$deleted > 0} {
+    set fg(gitdeleted) $fg(gitlocalicons)
+    set fg(gitmodifiedc) $fg(gitlocalcounters)
+  }
+  if {$cachedplus > 0} {
+    set fg(gitcachedplus) $fg(gitcommitcached)
+    set fg(gitcachedplusc) $fg(gitcommitcounters)
+  }
+  if {$cachedminus > 0} {
+    set fg(gitcachedminus) $fg(gitcommitcached)
+    set fg(gitcachedminusc) $fg(gitcommitcounters)
+  }
+  if {$untracked == 0 && $modified == 0 && $deleted == 0 && ($cachedplus > 0 || $cachedminus > 0)} {
+    set fg(gitcommit) $fg(gitcommitready)
+  }
   set untracked [format %03u $untracked]
   set modified [format %03u $modified]
   set deleted [format %03u $deleted]
+  set cachedplus [format %03u $cachedplus]
+  set cachedminus [format %03u $cachedminus]
 }
 
 append prompt "$ansi(reset)"
@@ -113,8 +172,15 @@ if {$gitrepo} {
   append prompt " $fg(gitmodified)$icons(gitmodified) $fg(gitmodifiedc)$modified"
   append prompt " $fg(gitlocalcounters)$icons(powerline2)"
   append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
-  append prompt "$bg(gitcommit)$icons(powerline) "
-  append prompt "$fgi(gitcommit)"
+  append prompt "$bg(gitcommit)$icons(powerline)"
+  append prompt " $fg(gitcachedplus)$icons(gitcachedplus) $fg(gitcachedplusc)$cachedplus"
+  append prompt " $fg(gitcommitcounters)$icons(powerline2)"
+  append prompt " $fg(gitcachedminus)$icons(gitcachedminus) $fg(gitcachedminusc)$cachedminus"
+  append prompt " $fg(gitcommitcounters)$icons(powerline2)"
+  append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
+  append prompt "$bg(gitremote)$icons(powerline)"
+
+  append prompt "$fgi(gitremote)"
   append prompt "$ansi(bgreset)$icons(powerline)\\n"
 }
 append prompt "$bg(cli)  $fgi(cli)"
