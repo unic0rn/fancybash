@@ -35,7 +35,7 @@ color gitlocalcounters fg 10
 color gitlocalicons fg 8
 color gitcommit bg 0
 color gitcommitoff fg 8
-color gitcommitcached fg 4
 color gitcommitcounters fg 5
+color gitcommitcached fg 4
 color gitcommitready fg 2
 color gitremote bg 10
