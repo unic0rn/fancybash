@@ -88,7 +88,7 @@ if {$hash ne "child process exited abnormally"} {
 }
 if {$gitrepo} {
   catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
-  set fresh [catch {exec git log --pretty=oneline -n1 >&/dev/null}]
+#  set fresh [catch {exec git log --pretty=oneline -n1 >&/dev/null}]
   set fg(gituntracked) $fg(gitlocaloff)
   set fg(gituntrackedc) $fg(gitlocaloff)
   set untracked 0
