@@ -14,6 +14,8 @@ proc icon {idx i} {
 }
 
 set ansi(reset) {\[\e[0m\]}
+set ansi(inverse1) {\[\e[7m\]}
+set ansi(inverse0) {\[\e[27m\]}
 set ansi(fgreset) {\[\e[39m\]}
 set ansi(fg0) {\[\e[30m\]}
 set ansi(fg1) {\[\e[31m\]}
@@ -51,6 +53,7 @@ set ansi(bg15) {\[\e[107m\]}
 
 set srcpath [info script]
 source "[string range $srcpath 0 [string last fancybash $srcpath]-1]themes/[lindex $argv 0]"
+set icons(powerline) "$ansi(inverse1)$icons(powerline)$ansi(inverse0)"
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
@@ -77,6 +80,43 @@ if {[string length $dir] > $maxpathwidth} {
   set path [string map [list / $icons(powerline2)] $path]
 }
 
+catch {exec git rev-parse HEAD 2>/dev/null} hash
+if {$hash ne "child process exited abnormally"} {
+  set gitrepo 1
+} else {
+  set gitrepo 0
+}
+if {$gitrepo} {
+  catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
+  set fresh [catch {git log --pretty=oneline -n1 >&/dev/null}]
+  set fg(gituntracked) $fg(gitlocaloff)
+  set fg(gituntrackedc) $fg(gitlocaloff)
+  set untracked 0
+  set fg(gitmodified) $fg(gitlocaloff)
+  set fg(gitmodifiedc) $fg(gitlocaloff)
+  set modified 0
+  set fg(gitdeleted) $fg(gitlocaloff)
+  set fg(gitdeletedc) $fg(gitlocaloff)
+  set deleted 0
+  
+  set untracked [format %03u $untracked]
+  set modified [format %03u $modified]
+  set deleted [format %03u $deleted]
+}
+
+append prompt "$ansi(reset)"
+if {$gitrepo} {
+  append prompt "$bg(cli)$fg(cli)$icons(git)  $fgi(cli)"
+  append prompt "$bg(gitlocal)$icons(powerline)"
+  append prompt " $fg(gituntracked)$icons(gituntracked) $fg(gituntrackedc)$untracked"
+  append prompt " $fg(gitlocalcounters)$icons(powerline2)"
+  append prompt " $fg(gitmodified)$icons(gitmodified) $fg(gitmodifiedc)$modified"
+  append prompt " $fg(gitlocalcounters)$icons(powerline2)"
+  append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
+  append prompt "$bg(gitcommit)$icons(powerline) "
+  append prompt "$fgi(gitcommit)"
+  append prompt "$ansi(bgreset)$icons(powerline)\\n"
+}
 append prompt "$bg(cli)  $fgi(cli)"
 append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) $hostname $fgi(host)"
 append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $fgi(date)"
