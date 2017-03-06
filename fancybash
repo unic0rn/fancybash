@@ -108,29 +108,27 @@ if {$gitrepo} {
   set fg(gitcommitslash1) $fg(gitcommitoff)
   set fg(gitcommitslash2) $fg(gitcommitoff)
 
-  if {!$fresh} {
-    set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
-    if {$hasupstream && $upstream eq "@{upstream}"} {
-      set hasupstream 0
-    }
-    catch {exec git status --porcelain 2>/dev/null} status
-    set slines [split $status "\n"]
-    foreach f $slines {
-      set x [string index $f 0]
-      set y [string index $f 1]
-      if {"$x$y" eq "??"} {
-        incr untracked
-      } else {
-        if {$y eq "M"} {
-          incr modified
-        } elseif {$y eq "D"} {
-          incr deleted
-        }
-        if {$x eq "A" || $x eq "M"} {
-          incr cachedplus
-        } elseif {$x eq "D"} {
-          incr cachedminus
-        }
+  set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
+  if {$hasupstream && $upstream eq "@{upstream}"} {
+    set hasupstream 0
+  }
+  catch {exec git status --porcelain 2>/dev/null} status
+  set slines [split $status "\n"]
+  foreach f $slines {
+    set x [string index $f 0]
+    set y [string index $f 1]
+    if {"$x$y" eq "??"} {
+      incr untracked
+    } else {
+      if {$y eq "M"} {
+        incr modified
+      } elseif {$y eq "D"} {
+        incr deleted
+      }
+      if {$x eq "A" || $x eq "M"} {
+        incr cachedplus
+      } elseif {$x eq "D"} {
+        incr cachedminus
       }
     }
   }
