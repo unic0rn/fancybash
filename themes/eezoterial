@@ -12,9 +12,12 @@ icon gitlocal f109
 icon gituntracked f043
 icon gitmodified f040
 icon gitdeleted f00d
-icon gitcachedplus f067
-icon gitcachedminus f068
+icon gitplus f067
+icon gitminus f068
 icon gitcommit f090
+icon gitdetached f127
+icon gitff f102
+
 
 color cli bg 8
 color cli fg 14
@@ -39,3 +42,4 @@ color gitcommitcounters fg 5
 color gitcommitcached fg 4
 color gitcommitready fg 2
 color gitremote bg 10
+color gitremote fg 14

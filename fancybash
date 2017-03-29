@@ -87,7 +87,6 @@ if {$hash ne "child process exited abnormally"} {
   set gitrepo 0
 }
 if {$gitrepo} {
-  catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
 #  set fresh [catch {exec git log --pretty=oneline -n1 >&/dev/null}]
   set fg(gituntracked) $fg(gitlocaloff)
   set fg(gituntrackedc) $fg(gitlocaloff)
@@ -108,10 +107,6 @@ if {$gitrepo} {
   set fg(gitcommitslash1) $fg(gitcommitoff)
   set fg(gitcommitslash2) $fg(gitcommitoff)
 
-  set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
-  if {$hasupstream && $upstream eq "@{upstream}"} {
-    set hasupstream 0
-  }
   catch {exec git status --porcelain 2>/dev/null} status
   set slines [split $status "\n"]
   foreach f $slines {
@@ -131,6 +126,37 @@ if {$gitrepo} {
         incr cachedminus
       }
     }
+  }
+  catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
+  if {$branch eq "HEAD"} {
+    set detached 1
+  } else {
+    set detached 0
+  }
+  set hastag [expr ![catch {exec git describe --exact-match --tags $hash 2>/dev/null} tag]]
+  set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
+  if {$hasupstream && $upstream eq "@{upstream}"} {
+    set hasupstream 0
+  }
+  set ahead 0
+  set behind 0
+  if {$hasupstream} {
+    catch {exec git log --pretty=oneline --topo-order --left-right $hash...@{upstream} 2>/dev/null} difflog
+    set slines [split $difflog "\n"]
+    foreach c $slines {
+      set x [string index $c 0]
+      if {$x eq "<"} {
+        incr ahead
+      } elseif {$x eq ">"} {
+        incr behind
+      }
+    }
+  }
+  set diverged [expr $ahead > 0 && $behind > 0]
+  set push [expr !$diverged && $ahead > 0]
+  set willrebase [expr ![catch {exec git config --get branch.$branch.rebase 2>/dev/null} rebase]]
+  if {$willrebase} {
+    set willrebase $rebase
   }
   
   if {$untracked > 0} {
@@ -181,15 +207,15 @@ append prompt "$ansi(reset)"
 if {$gitrepo} {
   append prompt "$bg(cli)$fg(cli)$icons(git)  $fgi(cli)"
   append prompt "$bg(gitlocal)$icons(powerline)"
-  append prompt " $fg(gituntracked)$icons(gituntracked)$fg(gituntrackedc)$untracked"
+  append prompt " $fg(gituntracked)$icons(gituntracked) $fg(gituntrackedc)$untracked"
   append prompt " $fg(gitlocalcounters)$icons(powerline2)"
-  append prompt " $fg(gitmodified)$icons(gitmodified)$fg(gitmodifiedc)$modified"
+  append prompt " $fg(gitmodified)$icons(gitmodified) $fg(gitmodifiedc)$modified"
   append prompt " $fg(gitlocalcounters)$icons(powerline2)"
-  append prompt " $fg(gitdeleted)$icons(gitdeleted)$fg(gitdeletedc)$deleted $fgi(gitlocal)"
+  append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
   append prompt "$bg(gitcommit)$icons(powerline)"
-  append prompt " $fg(gitcachedplus)$icons(gitcachedplus)$fg(gitcachedplusc)$cachedplus"
+  append prompt " $fg(gitcachedplus)$icons(gitplus)$fg(gitcachedplusc)$cachedplus"
   append prompt " $fg(gitcommitslash1)$icons(powerline2)"
-  append prompt " $fg(gitcachedminus)$icons(gitcachedminus)$fg(gitcachedminusc)$cachedminus"
+  append prompt " $fg(gitcachedminus)$icons(gitminus)$fg(gitcachedminusc)$cachedminus"
   append prompt " $fg(gitcommitslash2)$icons(powerline2)"
   append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
   append prompt "$bg(gitremote)$icons(powerline)"
