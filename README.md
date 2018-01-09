@@ -42,4 +42,6 @@ If you'll want your theme to be added to this repo, send me a pull request with 
 
 ## Screenshots ##
 
-Coming soon.
+eezoterial theme @ [eezoterial terminal theme](<https://github.com/unic0rn/eezoterial>)
+
+![eezoterial](/images/eezoterial.png?raw=true)
