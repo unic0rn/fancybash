@@ -27,7 +27,7 @@ PROMPT_COMMAND='PS1=`/path/to/fancybash eezoterial`'
 ```
 to your .bashrc, where `eezoterial` is the name of the theme.
 
-## other shells: ##
+#### other shells: ####
 
 It should be possible to use it with zsh (and perhaps other shells as well), I just didn't try. If you'll get it working under anything else than bash, let me know and I'll update the readme.
 
