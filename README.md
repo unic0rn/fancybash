@@ -18,6 +18,10 @@ This is a rewrite of [oh-my-git](<https://github.com/arialdomartini/oh-my-git>),
 
 tcl, stty, [one of those fonts](<https://github.com/ryanoasis/nerd-fonts>)
 
+#### Disclaimer ####
+
+Non-monospaced fonts are not supported. I know, smaller icons don't look as nice, but if you'll try using such icons in Vim running in a terminal, you'll understand that monospace is the way to go. Also, with non-monospaced fonts adapting to the terminal width will not work.
+
 ## Installation ##
 
 #### bash: ####
@@ -42,6 +46,6 @@ If you'll want your theme to be added to this repo, send me a pull request with 
 
 ## Screenshots ##
 
-eezoterial theme @ [eezoterial terminal theme](<https://github.com/unic0rn/eezoterial>)
+eezoterial theme @ [eezoterial terminal theme (light)](<https://github.com/unic0rn/eezoterial>)
 
 ![eezoterial](/images/eezoterial.png?raw=true)
