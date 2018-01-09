@@ -13,6 +13,10 @@ proc icon {idx i} {
   set ::icons($idx) [subst \\u$i]
 }
 
+proc oneline {s} {
+  return [lindex [split $s "\n"] 0]
+}
+
 set ansi(reset) {\[\e[0m\]}
 set ansi(inverse1) {\[\e[7m\]}
 set ansi(inverse0) {\[\e[27m\]}
@@ -80,14 +84,15 @@ if {[string length $dir] > $maxpathwidth} {
   set path [string map [list / $icons(powerline2)] $path]
 }
 
-catch {exec git rev-parse HEAD 2>/dev/null} hash
-if {$hash ne "child process exited abnormally"} {
+catch {exec git rev-parse HEAD} hash
+set hash [oneline $hash]
+if {[string first "fatal:" $hash] == -1} {
   set gitrepo 1
+  set hashs "[string range $hash 0 6]"
 } else {
   set gitrepo 0
 }
 if {$gitrepo} {
-#  set fresh [catch {exec git log --pretty=oneline -n1 >&/dev/null}]
   set fg(gituntracked) $fg(gitlocaloff)
   set fg(gituntrackedc) $fg(gitlocaloff)
   set untracked 0
@@ -128,19 +133,31 @@ if {$gitrepo} {
     }
   }
   catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
+  set branch [oneline $branch]
+  regsub -all {[^a-zA-Z0-9 -]} $branch "" branch
   if {$branch eq "HEAD"} {
     set detached 1
   } else {
     set detached 0
   }
   set hastag [expr ![catch {exec git describe --exact-match --tags $hash 2>/dev/null} tag]]
+  if {$hastag} {
+    regsub -all {[^a-zA-Z0-9. -]} $tag "" tag
+  }
   set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
   if {$hasupstream && $upstream eq "@{upstream}"} {
     set hasupstream 0
   }
   set ahead 0
   set behind 0
-  if {$hasupstream} {
+  if {$hasupstream && !$detached} {
+    set us [split $upstream "/"]
+    set us1 [join [lrange $us 1 end] ""]
+    regsub -all {[^a-zA-Z0-9 -]} $us1 "" us1
+    if {$us1 eq $branch} {
+      set upstream [lindex $us 0]
+    }
+    regsub -all {[^a-zA-Z0-9/ -]} $upstream "" upstream
     catch {exec git log --pretty=oneline --topo-order --left-right $hash...@{upstream} 2>/dev/null} difflog
     set slines [split $difflog "\n"]
     foreach c $slines {
@@ -158,7 +175,31 @@ if {$gitrepo} {
   if {$willrebase} {
     set willrebase $rebase
   }
-  
+  catch {exec git rev-parse --git-dir 2>/dev/null} gitdir
+  set gitdir [oneline $gitdir]
+  set inprogress ""
+  if {[file exists "$gitdir/rebase-merge/interactive"]} {
+    set inprogress "rebase -i"
+  } elseif {[file exists "$gitdir/rebase-merge"]} {
+    set inprogress "rebase -m"
+  } else {
+    if {[file exists "$gitdir/rebase-apply"]} {
+      if {[file exists "$gitdir/rebase-apply/rebasing"]} {
+        set inprogress "rebase"
+      } elseif {[file exists "$gitdir/rebase-apply/applying"]} {
+        set inprogress "am"
+      } else {
+        set inprogress "am/rebase"
+      }
+    } elseif {[file exists "$gitdir/MERGE_HEAD"]} {
+      set inprogress "merge"
+    } elseif {[file exists "$gitdir/CHERRY_PICK_HEAD"]} {
+      set inprogress "cherry-pick"
+    } elseif {[file exists "$gitdir/BISECT_LOG"]} {
+      set inprogress "bisect"
+    }
+  }
+   
   if {$untracked > 0} {
     set fg(gituntracked) $fg(gitlocalicons)
     set fg(gituntrackedc) $fg(gitlocalcounters)
@@ -182,7 +223,9 @@ if {$gitrepo} {
     set fg(gitcommitslash1) $fg(gitcommitcounters)
     set fg(gitcommitslash2) $fg(gitcommitcounters)
   }
-  if {$untracked == 0 && $modified == 0 && $deleted == 0 && ($cachedplus > 0 || $cachedminus > 0)} {
+  if {$inprogress ne ""} {
+    set fg(gitcommitslash2) $fg(gitcommitcounters)
+  } elseif {$untracked == 0 && $modified == 0 && $deleted == 0 && ($cachedplus > 0 || $cachedminus > 0)} {
     set fg(gitcommit) $fg(gitcommitready)
     set fg(gitcommitslash2) $fg(gitcommitcounters)
   }
@@ -201,6 +244,68 @@ if {$gitrepo} {
   if {$cachedminus == 0} {
     set cachedminus "-"
   }
+
+  set gitwidth [expr 34+[string length $inprogress]]
+  incr gitwidth [string length $untracked]
+  incr gitwidth [string length $modified]
+  incr gitwidth [string length $deleted]
+  incr gitwidth [string length $cachedplus]
+  incr gitwidth [string length $cachedminus]
+  set showhash 1
+  if {$detached} {
+    incr gitwidth 3
+  } else {
+    incr gitwidth 7
+    incr gitwidth [string length $behind]
+    incr gitwidth [string length $ahead]
+  }
+
+  if {$hasupstream && !$detached} {
+    if {$behind == 0 && $ahead == 0} {
+      set gitaction " "
+    } elseif {$ahead == 0} {
+      set gitaction $icons(gitff)
+    } elseif {$behind == 0} {
+      set gitaction $icons(gitpush)
+    } else {
+      set gitaction $icons(gitdiverged)
+    }
+    incr gitwidth 3
+    incr gitwidth [string length $branch]
+    if {[expr $gitwidth+3+[string length $upstream]] <= $width} {
+      incr gitwidth 3
+      incr gitwidth [string length $upstream]
+      set branch "$branch "
+      if {$willrebase} {
+        append branch $icons(gitpull)
+      } else {
+        append branch $icons(gitmerge)
+      }
+      append branch " $upstream"
+    }
+  } else {
+    set gitaction $icons(gitlocal)
+    incr gitwidth 3
+    incr gitwidth [string length $branch]
+  }
+  if {$behind == 0} {
+    set behind "--"
+  } else {
+    set behind "-$behind"
+  }
+  if {$ahead == 0} {
+    set ahead "--"
+  } else {
+    set ahead "+$ahead"
+  }
+  if {[expr $gitwidth+10] > $width} {
+    set showhash 0
+  } else {
+    incr gitwidth 10
+  }
+  if {$hastag && [expr $gitwidth+5+[string length $tag]] > $width} {
+    set hastag 0
+  }
 }
 
 append prompt "$ansi(reset)"
@@ -213,14 +318,30 @@ if {$gitrepo} {
   append prompt " $fg(gitlocalcounters)$icons(powerline2)"
   append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
   append prompt "$bg(gitcommit)$icons(powerline)"
-  append prompt " $fg(gitcachedplus)$icons(gitplus)$fg(gitcachedplusc)$cachedplus"
+  append prompt " $fg(gitcachedplus)$icons(gitplus)$fg(gitcachedplusc) $cachedplus"
   append prompt " $fg(gitcommitslash1)$icons(powerline2)"
-  append prompt " $fg(gitcachedminus)$icons(gitminus)$fg(gitcachedminusc)$cachedminus"
+  append prompt " $fg(gitcachedminus)$icons(gitminus)$fg(gitcachedminusc) $cachedminus"
   append prompt " $fg(gitcommitslash2)$icons(powerline2)"
-  append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
+  if {$inprogress eq ""} {
+    append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
+  } else {
+    append prompt " $fg(gitcommitcached)$icons(gitinprogress) $fg(gitcommitready)$inprogress $fgi(gitcommit)"
+  }
   append prompt "$bg(gitremote)$icons(powerline)"
+  if {$detached} {
+    append prompt " $fg(gitremoteaction)$icons(gitdetached)"
+  } else {
+    append prompt " $fg(gitremote)$behind $fg(gitremoteaction)$gitaction $fg(gitremote)$ahead"
+    append prompt " $icons(powerline2) $branch"
+  }
+  if {$showhash} {
+    append prompt " $fg(gitremote)$icons(powerline2) $hashs"
+  }
+  if {$hastag} {
+    append prompt " $fg(gitremote)$icons(powerline2) $icons(gittag) $tag"
+  }
 
-  append prompt "$fgi(gitremote)"
+  append prompt " $fgi(gitremote)"
   append prompt "$ansi(bgreset)$icons(powerline)\\n"
 }
 append prompt "$bg(cli)  $fgi(cli)"

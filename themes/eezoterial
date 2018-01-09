@@ -1,8 +1,6 @@
 icon cli e7a2
 icon powerline e0ba
 icon powerline2 e0bb
-icon bolt f0e7
-icon bolt2 26a1
 icon host f109
 icon date f073
 icon time f017
@@ -17,7 +15,12 @@ icon gitminus f068
 icon gitcommit f090
 icon gitdetached f127
 icon gitff f102
-
+icon gitpush f40a
+icon gitdiverged f418
+icon gittag f02b
+icon gitpull f407
+icon gitmerge f419
+icon gitinprogress f0ad
 
 color cli bg 8
 color cli fg 14
@@ -43,3 +46,4 @@ color gitcommitcached fg 4
 color gitcommitready fg 2
 color gitremote bg 10
 color gitremote fg 14
+color gitremoteaction fg 7
