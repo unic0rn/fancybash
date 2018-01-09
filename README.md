@@ -9,7 +9,7 @@ This is a rewrite of [oh-my-git](<https://github.com/arialdomartini/oh-my-git>),
 
 * it tries to be faster
 * it displays a little bit more info...
-* ...but it lacks stash support (I'll add it if there'll be interest)
+  * ...but it lacks stash support (I'll add it if there'll be interest)
 * it's easily themeable
   * like, really easily
 * it adapts to the width of the terminal - within some reasonable degree
@@ -36,7 +36,9 @@ It should be possible to use it with zsh (and perhaps other shells as well), I j
 
 So far there is one, called eezoterial. It's designed to work with [eezoterial terminal theme](<https://github.com/unic0rn/eezoterial>) (to be precise, with light version only), but since eezoterial palette tries to be compatible with solarized palette, eezoterial theme for fancybash should look just fine if you're using solarized (base16) terminal theme. And yes, I didn't bother checking it.
 
-It doesn't matter though, since creating new themes is really easy. Create a copy of eezoterial theme, open it, have fun. If you'll want your theme to be added to this repo, send me a pull request with the theme, screenshot and a link to the terminal theme it uses.
+It doesn't matter though, since creating new themes is really easy. Create a copy of eezoterial theme, open it, have fun.
+
+If you'll want your theme to be added to this repo, send me a pull request with the theme, screenshot and a link to the terminal theme it uses.
 
 ## Screenshots ##
 
