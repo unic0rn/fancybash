@@ -8,7 +8,7 @@ fancybash
 This is a rewrite of [oh-my-git](<https://github.com/arialdomartini/oh-my-git>), with some minor - and some not so minor - differences:
 
 * it is much faster
-  * on freebsd, with fresh git repo into which linux kernel was dumped (tar xzf & git add . - over 62k files), fancybash takes a little bit over 2 seconds to display the prompt, versus over 10 seconds for oh-my-git (depends on cpu and disk speed, obviously)
+  * on freebsd, with fresh git repo into which linux kernel was dumped (tar xzf & git add . - over 62k files), fancybash takes on average 2 seconds to display the prompt, versus 9 seconds for oh-my-git (depends on cpu and disk speed, obviously)
 * it displays a little bit more info...
   * ...but it lacks stash support (I'll add it if there'll be interest)
 * it's easily themeable
