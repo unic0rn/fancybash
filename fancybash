@@ -1,11 +1,26 @@
 #!/usr/bin/tclsh
 
+if {[lindex $argv 1] eq "mono"} {
+  set mono 1
+} else {
+  set mono 0
+}
+
 proc color {idx cmd c} {
   if {$cmd eq "bg"} {
-    set ::bg($idx) $::ansi(bg$c)
-    set ::fgi($idx) $::ansi(fg$c)
+    if {$::mono} {
+      set ::bg($idx) ""
+      set ::fgi($idx) ""
+    } else {
+      set ::bg($idx) $::ansi(bg$c)
+      set ::fgi($idx) $::ansi(fg$c)
+    }
   } elseif {$cmd eq "fg"} {
-    set ::fg($idx) $::ansi(fg$c)
+    if {$::mono} {
+      set ::fg($idx) ""
+    } else {
+      set ::fg($idx) $::ansi(fg$c)
+    }
   }
 }
 
@@ -17,43 +32,55 @@ proc oneline {s} {
   return [lindex [split $s "\n"] 0]
 }
 
-set ansi(reset) {\[\e[0m\]}
-set ansi(inverse1) {\[\e[7m\]}
-set ansi(inverse0) {\[\e[27m\]}
-set ansi(fgreset) {\[\e[39m\]}
-set ansi(fg0) {\[\e[30m\]}
-set ansi(fg1) {\[\e[31m\]}
-set ansi(fg2) {\[\e[32m\]}
-set ansi(fg3) {\[\e[33m\]}
-set ansi(fg4) {\[\e[34m\]}
-set ansi(fg5) {\[\e[35m\]}
-set ansi(fg6) {\[\e[36m\]}
-set ansi(fg7) {\[\e[37m\]}
-set ansi(fg8) {\[\e[90m\]}
-set ansi(fg9) {\[\e[91m\]}
-set ansi(fg10) {\[\e[92m\]}
-set ansi(fg11) {\[\e[93m\]}
-set ansi(fg12) {\[\e[94m\]}
-set ansi(fg13) {\[\e[95m\]}
-set ansi(fg14) {\[\e[96m\]}
-set ansi(fg15) {\[\e[97m\]}
-set ansi(bgreset) {\[\e[49m\]}
-set ansi(bg0) {\[\e[40m\]}
-set ansi(bg1) {\[\e[41m\]}
-set ansi(bg2) {\[\e[42m\]}
-set ansi(bg3) {\[\e[43m\]}
-set ansi(bg4) {\[\e[44m\]}
-set ansi(bg5) {\[\e[45m\]}
-set ansi(bg6) {\[\e[46m\]}
-set ansi(bg7) {\[\e[47m\]}
-set ansi(bg8) {\[\e[100m\]}
-set ansi(bg9) {\[\e[101m\]}
-set ansi(bg10) {\[\e[102m\]}
-set ansi(bg11) {\[\e[103m\]}
-set ansi(bg12) {\[\e[104m\]}
-set ansi(bg13) {\[\e[105m\]}
-set ansi(bg14) {\[\e[106m\]}
-set ansi(bg15) {\[\e[107m\]}
+if {$mono} {
+  set ansi(reset) ""
+  set ansi(inverse1) ""
+  set ansi(inverse0) ""
+  set ansi(fgreset) ""
+  set ansi(bgreset) ""
+  for {set idx 0} {$idx < 16} {incr idx} {
+    set ansi(fg[subst $idx]) ""
+    set ansi(bg[subst $idx]) ""
+  }
+} else {
+  set ansi(reset) {\[\e[0m\]}
+  set ansi(inverse1) {\[\e[7m\]}
+  set ansi(inverse0) {\[\e[27m\]}
+  set ansi(fgreset) {\[\e[39m\]}
+  set ansi(fg0) {\[\e[30m\]}
+  set ansi(fg1) {\[\e[31m\]}
+  set ansi(fg2) {\[\e[32m\]}
+  set ansi(fg3) {\[\e[33m\]}
+  set ansi(fg4) {\[\e[34m\]}
+  set ansi(fg5) {\[\e[35m\]}
+  set ansi(fg6) {\[\e[36m\]}
+  set ansi(fg7) {\[\e[37m\]}
+  set ansi(fg8) {\[\e[90m\]}
+  set ansi(fg9) {\[\e[91m\]}
+  set ansi(fg10) {\[\e[92m\]}
+  set ansi(fg11) {\[\e[93m\]}
+  set ansi(fg12) {\[\e[94m\]}
+  set ansi(fg13) {\[\e[95m\]}
+  set ansi(fg14) {\[\e[96m\]}
+  set ansi(fg15) {\[\e[97m\]}
+  set ansi(bgreset) {\[\e[49m\]}
+  set ansi(bg0) {\[\e[40m\]}
+  set ansi(bg1) {\[\e[41m\]}
+  set ansi(bg2) {\[\e[42m\]}
+  set ansi(bg3) {\[\e[43m\]}
+  set ansi(bg4) {\[\e[44m\]}
+  set ansi(bg5) {\[\e[45m\]}
+  set ansi(bg6) {\[\e[46m\]}
+  set ansi(bg7) {\[\e[47m\]}
+  set ansi(bg8) {\[\e[100m\]}
+  set ansi(bg9) {\[\e[101m\]}
+  set ansi(bg10) {\[\e[102m\]}
+  set ansi(bg11) {\[\e[103m\]}
+  set ansi(bg12) {\[\e[104m\]}
+  set ansi(bg13) {\[\e[105m\]}
+  set ansi(bg14) {\[\e[106m\]}
+  set ansi(bg15) {\[\e[107m\]}
+}
 
 set srcpath [info script]
 source "[string range $srcpath 0 [string last fancybash $srcpath]-1]themes/[lindex $argv 0]"

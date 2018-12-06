@@ -33,6 +33,29 @@ PROMPT_COMMAND='PS1=`/path/to/fancybash eezoterial`'
 ```
 to your `.bashrc`, where `eezoterial` is the name of the theme.
 
+#### Visual Studio Code: ####
+
+I'm using `bash.bat`:
+```bat
+@echo off
+set VSCODETERM=%cd%
+Z:
+cd \cygwin\bin
+bash.exe --login -i
+```
+
+and this snippet in `.bashrc`:
+```bash
+if [[ -z ${VSCODETERM} ]]; then
+    PROMPT_COMMAND='PS1=`/z/devel/fancybash/fancybash eezoterial`'
+else
+    PROMPT_COMMAND='PS1=`/z/devel/fancybash/fancybash vscode mono`'
+    cd `cygpath $VSCODETERM`
+fi
+```
+
+That way I have full color prompt in mintty and monochrome in Visual Studio Code (since it seems to have trouble with ansi escape codes). Obviously, the path is preserved so choosing current working directory works as supposed.
+
 #### other shells: ####
 
 It should be possible to use it with zsh (and perhaps other shells as well), I just didn't try. If you'll get it working under anything else than bash, let me know and I'll update the readme.
