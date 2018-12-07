@@ -95,7 +95,7 @@ if {$tcl_platform(user) eq "root"} {
 
 set hostname [lindex [split [info hostname] "."] 0]
 set now [clock seconds]
-set width [lindex [exec stty size] 1]
+set width [expr [lindex [exec stty size] 1]-1]
 set maxpathwidth [expr $width-[string length $hostname]-42]
 set path [pwd]
 set dir [lindex [split $path "/"] end]
