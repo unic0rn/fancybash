@@ -93,7 +93,7 @@ if {$tcl_platform(user) eq "root"} {
   set fg(host) $fg(hostroot)
 }
 
-set hostname [lindex [split [info hostname] "."] 0]
+set hostname [lindex [split [exec hostname] "."] 0]
 set now [clock seconds]
 set width [expr [lindex [exec stty size] 1]-1]
 set maxpathwidth [expr $width-[string length $hostname]-42]
