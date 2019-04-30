@@ -1,5 +1,3 @@
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=unic0rn&url=https://github.com/unic0rn/fancybash&title=fancybash&language=&tags=github&category=software)
-
 fancybash
 ================
 
