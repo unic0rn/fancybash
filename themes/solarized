@@ -1,0 +1,49 @@
+icon cli e7a2
+icon powerline e0ba
+icon powerline2 e0bb
+icon host f109
+icon date f073
+icon time f017
+icon path f0a0
+icon git e709
+icon gitlocal f109
+icon gituntracked f043
+icon gitmodified f040
+icon gitdeleted f00d
+icon gitplus f067
+icon gitminus f068
+icon gitcommit f090
+icon gitdetached f127
+icon gitff f102
+icon gitpush f40a
+icon gitdiverged f418
+icon gittag f02b
+icon gitpull f407
+icon gitmerge f419
+icon gitinprogress f0ad
+
+color cli bg 8
+color cli fg 14
+color cliroot fg 1
+color host bg 4
+color host fg 8
+color hostroot bg 1
+color hostroot fg 8
+color date bg 10
+color date fg 14
+color time bg 6
+color time fg 8
+color path bg 14
+color path fg 8
+color gitlocal bg 12
+color gitlocaloff fg 11
+color gitlocalcounters fg 10
+color gitlocalicons fg 8
+color gitcommit bg 0
+color gitcommitoff fg 8
+color gitcommitcounters fg 10
+color gitcommitcached fg 4
+color gitcommitready fg 5
+color gitremote bg 10
+color gitremote fg 14
+color gitremoteaction fg 7
