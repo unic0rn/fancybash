@@ -1,88 +1,381 @@
 #!/usr/bin/tclsh
 
-set ansi(bold) {\[\e[1m\]}
-set ansi(inverse1) {\[\e[7m\]}
-set ansi(inverse0) {\[\e[27m\]}
-set ansi(reset) {\[\e[0m\]}
-set ansi(fgreset) {\[\e[39m\]}
-set ansi(fg0) {\[\e[30m\]}
-set ansi(fg1) {\[\e[31m\]}
-set ansi(fg2) {\[\e[32m\]}
-set ansi(fg3) {\[\e[33m\]}
-set ansi(fg4) {\[\e[34m\]}
-set ansi(fg5) {\[\e[35m\]}
-set ansi(fg6) {\[\e[36m\]}
-set ansi(fg7) {\[\e[37m\]}
-set ansi(fg8) {\[\e[90m\]}
-set ansi(fg9) {\[\e[91m\]}
-set ansi(fg10) {\[\e[92m\]}
-set ansi(fg11) {\[\e[93m\]}
-set ansi(fg12) {\[\e[94m\]}
-set ansi(fg13) {\[\e[95m\]}
-set ansi(fg14) {\[\e[96m\]}
-set ansi(fg15) {\[\e[97m\]}
-set ansi(bgreset) {\[\e[49m\]}
-set ansi(bg0) {\[\e[40m\]}
-set ansi(bg1) {\[\e[41m\]}
-set ansi(bg2) {\[\e[42m\]}
-set ansi(bg3) {\[\e[43m\]}
-set ansi(bg4) {\[\e[44m\]}
-set ansi(bg5) {\[\e[45m\]}
-set ansi(bg6) {\[\e[46m\]}
-set ansi(bg7) {\[\e[47m\]}
-set ansi(bg8) {\[\e[100m\]}
-set ansi(bg9) {\[\e[101m\]}
-set ansi(bg10) {\[\e[102m\]}
-set ansi(bg11) {\[\e[103m\]}
-set ansi(bg12) {\[\e[104m\]}
-set ansi(bg13) {\[\e[105m\]}
-set ansi(bg14) {\[\e[106m\]}
-set ansi(bg15) {\[\e[107m\]}
+if {[lindex $argv 1] eq "mono"} {
+  set mono 1
+} else {
+  set mono 0
+}
 
-set icons(cli) "\ue7a2"
-set icons(powerline) "\ue0bc"
-set icons(powerline2) "\ue0bd"
-set icons(bolt) "\uf0e7"
-set icons(bolt2) "\u26a1"
-set icons(host) "\uf108"
-set icons(date) "\uf073"
-set icons(time) "\uf017"
-set icons(dir) "\uf0a0"
+proc color {idx cmd c} {
+  if {$cmd eq "bg"} {
+    if {$::mono} {
+      set ::bg($idx) ""
+      set ::fgi($idx) ""
+    } else {
+      set ::bg($idx) $::ansi(bg$c)
+      set ::fgi($idx) $::ansi(fg$c)
+    }
+  } elseif {$cmd eq "fg"} {
+    if {$::mono} {
+      set ::fg($idx) ""
+    } else {
+      set ::fg($idx) $::ansi(fg$c)
+    }
+  }
+}
 
-set bg(cli) $ansi(bg8)
-set bgi(cli) $ansi(fg8)
-set fg(cli) $ansi(fg14)
-set fg(cliroot) $ansi(fg2)
-set bg(host) $ansi(bg13)
-set bgi(host) $ansi(fg13)
-set fg(host) $ansi(fg8)
-set bg(hostroot) $ansi(bg0)
-set bgi(hostroot) $ansi(fg0)
-set fg(hostroot) $ansi(fg2)
-set bg(date) $ansi(bg6)
-set bgi(date) $ansi(fg6)
-set fg(date) $ansi(fg8)
-set bg(time) $ansi(bg14)
-set bgi(time) $ansi(fg14)
-set fg(time) $ansi(fg8)
-set bg(dir) $ansi(bg9)
-set bgi(dir) $ansi(fg9)
-set fg(dir) $ansi(fg0)
+proc icon {idx i} {
+  set ::icons($idx) [subst \\u$i]
+}
+
+proc oneline {s} {
+  return [lindex [split $s "\n"] 0]
+}
+
+if {$mono} {
+  set ansi(reset) ""
+  set ansi(inverse1) ""
+  set ansi(inverse0) ""
+  set ansi(fgreset) ""
+  set ansi(bgreset) ""
+  for {set idx 0} {$idx < 16} {incr idx} {
+    set ansi(fg[subst $idx]) ""
+    set ansi(bg[subst $idx]) ""
+  }
+} else {
+  set ansi(reset) {\[\e[0m\]}
+  set ansi(inverse1) {\[\e[7m\]}
+  set ansi(inverse0) {\[\e[27m\]}
+  set ansi(fgreset) {\[\e[39m\]}
+  set ansi(fg0) {\[\e[30m\]}
+  set ansi(fg1) {\[\e[31m\]}
+  set ansi(fg2) {\[\e[32m\]}
+  set ansi(fg3) {\[\e[33m\]}
+  set ansi(fg4) {\[\e[34m\]}
+  set ansi(fg5) {\[\e[35m\]}
+  set ansi(fg6) {\[\e[36m\]}
+  set ansi(fg7) {\[\e[37m\]}
+  set ansi(fg8) {\[\e[90m\]}
+  set ansi(fg9) {\[\e[91m\]}
+  set ansi(fg10) {\[\e[92m\]}
+  set ansi(fg11) {\[\e[93m\]}
+  set ansi(fg12) {\[\e[94m\]}
+  set ansi(fg13) {\[\e[95m\]}
+  set ansi(fg14) {\[\e[96m\]}
+  set ansi(fg15) {\[\e[97m\]}
+  set ansi(bgreset) {\[\e[49m\]}
+  set ansi(bg0) {\[\e[40m\]}
+  set ansi(bg1) {\[\e[41m\]}
+  set ansi(bg2) {\[\e[42m\]}
+  set ansi(bg3) {\[\e[43m\]}
+  set ansi(bg4) {\[\e[44m\]}
+  set ansi(bg5) {\[\e[45m\]}
+  set ansi(bg6) {\[\e[46m\]}
+  set ansi(bg7) {\[\e[47m\]}
+  set ansi(bg8) {\[\e[100m\]}
+  set ansi(bg9) {\[\e[101m\]}
+  set ansi(bg10) {\[\e[102m\]}
+  set ansi(bg11) {\[\e[103m\]}
+  set ansi(bg12) {\[\e[104m\]}
+  set ansi(bg13) {\[\e[105m\]}
+  set ansi(bg14) {\[\e[106m\]}
+  set ansi(bg15) {\[\e[107m\]}
+}
+
+set srcpath [info script]
+source "[string range $srcpath 0 [string last fancybash $srcpath]-1]themes/[lindex $argv 0]"
+set icons(powerline) "$ansi(inverse1)$icons(powerline)$ansi(inverse0)"
 
 if {$tcl_platform(user) eq "root"} {
   set fg(cli) $fg(cliroot)
   set bg(host) $bg(hostroot)
-  set bgi(host) $bgi(hostroot)
+  set fgi(host) $fgi(hostroot)
   set fg(host) $fg(hostroot)
 }
 
-#puts -nonewline {\[\e[0;37;41m\] \d \[\e[7;32m\]\[\e[0;30;42m\] \l \[\e[7;34m\]\[\e[0;37;44m\] \W \[\e[0;34m\]\[\e[0m\] }
+set hostname [lindex [split [exec hostname] "."] 0]
 set now [clock seconds]
-append prompt "$bg(cli)  $bgi(cli)"
-append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) \\h $bgi(host)"
-append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $bgi(date)"
-append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $bgi(time)"
-append prompt "$bg(dir)$icons(powerline)$fg(dir) $icons(dir) \\W $bgi(dir)"
-append prompt "$ansi(bgreset)$icons(powerline)\n"
-append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$bgi(cli)$icons(powerline)$ansi(fgreset) "
+set width [expr [lindex [exec stty size] 1]-1]
+set maxpathwidth [expr $width-[string length $hostname]-42]
+set path [pwd]
+set dir [lindex [split $path "/"] end]
+if {[string length $dir] > $maxpathwidth} {
+  set path "[string range $dir 0 $maxpathwidth-4]..."
+} elseif {[string length $path] > $maxpathwidth} {
+  if {[string length $dir] > $maxpathwidth-4} {
+    set path $dir
+  } else {
+    set path [string map [list / $icons(powerline2)] "...[string range $path end-[expr $maxpathwidth-4] end]"]
+  }
+} else {
+  set path [string map [list / $icons(powerline2)] $path]
+}
+
+catch {exec git rev-parse HEAD} hash
+set hash [oneline $hash]
+if {[string first "fatal:" $hash] == -1} {
+  set gitrepo 1
+  set hashs "[string range $hash 0 6]"
+} else {
+  set gitrepo 0
+}
+if {$gitrepo} {
+  set fg(gituntracked) $fg(gitlocaloff)
+  set fg(gituntrackedc) $fg(gitlocaloff)
+  set untracked 0
+  set fg(gitmodified) $fg(gitlocaloff)
+  set fg(gitmodifiedc) $fg(gitlocaloff)
+  set modified 0
+  set fg(gitdeleted) $fg(gitlocaloff)
+  set fg(gitdeletedc) $fg(gitlocaloff)
+  set deleted 0
+  set fg(gitcachedplus) $fg(gitcommitoff)
+  set fg(gitcachedplusc) $fg(gitcommitoff)
+  set cachedplus 0
+  set fg(gitcachedminus) $fg(gitcommitoff)
+  set fg(gitcachedminusc) $fg(gitcommitoff)
+  set cachedminus 0
+  set fg(gitcommit) $fg(gitcommitoff)
+  set fg(gitcommitslash1) $fg(gitcommitoff)
+  set fg(gitcommitslash2) $fg(gitcommitoff)
+
+  catch {exec git status --porcelain 2>/dev/null} status
+  set slines [split $status "\n"]
+  foreach f $slines {
+    set x [string index $f 0]
+    set y [string index $f 1]
+    if {"$x$y" eq "??"} {
+      incr untracked
+    } else {
+      if {$y eq "M"} {
+        incr modified
+      } elseif {$y eq "D"} {
+        incr deleted
+      }
+      if {$x eq "A" || $x eq "M"} {
+        incr cachedplus
+      } elseif {$x eq "D"} {
+        incr cachedminus
+      }
+    }
+  }
+  catch {exec git rev-parse --abbrev-ref HEAD 2>/dev/null} branch
+  set branch [oneline $branch]
+  regsub -all {[^a-zA-Z0-9 -]} $branch "" branch
+  if {$branch eq "HEAD"} {
+    set detached 1
+  } else {
+    set detached 0
+  }
+  set hastag [expr ![catch {exec git describe --exact-match --tags $hash 2>/dev/null} tag]]
+  if {$hastag} {
+    regsub -all {[^a-zA-Z0-9. -]} $tag "" tag
+  }
+  set hasupstream [expr ![catch {exec git rev-parse --symbolic-full-name --abbrev-ref @{upstream} 2>/dev/null} upstream]]
+  if {$hasupstream && $upstream eq "@{upstream}"} {
+    set hasupstream 0
+  }
+  set ahead 0
+  set behind 0
+  if {$hasupstream && !$detached} {
+    set us [split $upstream "/"]
+    set us1 [join [lrange $us 1 end] ""]
+    regsub -all {[^a-zA-Z0-9 -]} $us1 "" us1
+    if {$us1 eq $branch} {
+      set upstream [lindex $us 0]
+    }
+    regsub -all {[^a-zA-Z0-9/ -]} $upstream "" upstream
+    catch {exec git log --pretty=oneline --topo-order --left-right $hash...@{upstream} 2>/dev/null} difflog
+    set slines [split $difflog "\n"]
+    foreach c $slines {
+      set x [string index $c 0]
+      if {$x eq "<"} {
+        incr ahead
+      } elseif {$x eq ">"} {
+        incr behind
+      }
+    }
+  }
+  set diverged [expr $ahead > 0 && $behind > 0]
+  set push [expr !$diverged && $ahead > 0]
+  set willrebase [expr ![catch {exec git config --get branch.$branch.rebase 2>/dev/null} rebase]]
+  if {$willrebase} {
+    set willrebase $rebase
+  }
+  catch {exec git rev-parse --git-dir 2>/dev/null} gitdir
+  set gitdir [oneline $gitdir]
+  set inprogress ""
+  if {[file exists "$gitdir/rebase-merge/interactive"]} {
+    set inprogress "rebase -i"
+  } elseif {[file exists "$gitdir/rebase-merge"]} {
+    set inprogress "rebase -m"
+  } else {
+    if {[file exists "$gitdir/rebase-apply"]} {
+      if {[file exists "$gitdir/rebase-apply/rebasing"]} {
+        set inprogress "rebase"
+      } elseif {[file exists "$gitdir/rebase-apply/applying"]} {
+        set inprogress "am"
+      } else {
+        set inprogress "am/rebase"
+      }
+    } elseif {[file exists "$gitdir/MERGE_HEAD"]} {
+      set inprogress "merge"
+    } elseif {[file exists "$gitdir/CHERRY_PICK_HEAD"]} {
+      set inprogress "cherry-pick"
+    } elseif {[file exists "$gitdir/BISECT_LOG"]} {
+      set inprogress "bisect"
+    }
+  }
+   
+  if {$untracked > 0} {
+    set fg(gituntracked) $fg(gitlocalicons)
+    set fg(gituntrackedc) $fg(gitlocalcounters)
+  }
+  if {$modified > 0} {
+    set fg(gitmodified) $fg(gitlocalicons)
+    set fg(gitmodifiedc) $fg(gitlocalcounters)
+  }
+  if {$deleted > 0} {
+    set fg(gitdeleted) $fg(gitlocalicons)
+    set fg(gitdeletedc) $fg(gitlocalcounters)
+  }
+  if {$cachedplus > 0} {
+    set fg(gitcachedplus) $fg(gitcommitcached)
+    set fg(gitcachedplusc) $fg(gitcommitcounters)
+    set fg(gitcommitslash1) $fg(gitcommitcounters)
+  }
+  if {$cachedminus > 0} {
+    set fg(gitcachedminus) $fg(gitcommitcached)
+    set fg(gitcachedminusc) $fg(gitcommitcounters)
+    set fg(gitcommitslash1) $fg(gitcommitcounters)
+    set fg(gitcommitslash2) $fg(gitcommitcounters)
+  }
+  if {$inprogress ne ""} {
+    set fg(gitcommitslash2) $fg(gitcommitcounters)
+  } elseif {$untracked == 0 && $modified == 0 && $deleted == 0 && ($cachedplus > 0 || $cachedminus > 0)} {
+    set fg(gitcommit) $fg(gitcommitready)
+    set fg(gitcommitslash2) $fg(gitcommitcounters)
+  }
+  if {$untracked == 0} {
+    set untracked "-"
+  }
+  if {$modified == 0} {
+    set modified "-"
+  }
+  if {$deleted == 0} {
+    set deleted "-"
+  }
+  if {$cachedplus == 0} {
+    set cachedplus "-"
+  }
+  if {$cachedminus == 0} {
+    set cachedminus "-"
+  }
+
+  set gitwidth [expr 34+[string length $inprogress]]
+  incr gitwidth [string length $untracked]
+  incr gitwidth [string length $modified]
+  incr gitwidth [string length $deleted]
+  incr gitwidth [string length $cachedplus]
+  incr gitwidth [string length $cachedminus]
+  set showhash 1
+  if {$detached} {
+    incr gitwidth 3
+  } else {
+    incr gitwidth 7
+    incr gitwidth [string length $behind]
+    incr gitwidth [string length $ahead]
+  }
+
+  if {$hasupstream && !$detached} {
+    if {$behind == 0 && $ahead == 0} {
+      set gitaction " "
+    } elseif {$ahead == 0} {
+      set gitaction $icons(gitff)
+    } elseif {$behind == 0} {
+      set gitaction $icons(gitpush)
+    } else {
+      set gitaction $icons(gitdiverged)
+    }
+    incr gitwidth 3
+    incr gitwidth [string length $branch]
+    if {[expr $gitwidth+3+[string length $upstream]] <= $width} {
+      incr gitwidth 3
+      incr gitwidth [string length $upstream]
+      set branch "$branch "
+      if {$willrebase} {
+        append branch $icons(gitpull)
+      } else {
+        append branch $icons(gitmerge)
+      }
+      append branch " $upstream"
+    }
+  } else {
+    set gitaction $icons(gitlocal)
+    incr gitwidth 3
+    incr gitwidth [string length $branch]
+  }
+  if {$behind == 0} {
+    set behind "--"
+  } else {
+    set behind "-$behind"
+  }
+  if {$ahead == 0} {
+    set ahead "--"
+  } else {
+    set ahead "+$ahead"
+  }
+  if {[expr $gitwidth+10] > $width} {
+    set showhash 0
+  } else {
+    incr gitwidth 10
+  }
+  if {$hastag && [expr $gitwidth+5+[string length $tag]] > $width} {
+    set hastag 0
+  }
+}
+
+append prompt "$ansi(reset)"
+if {$gitrepo} {
+  append prompt "$bg(cli)$fg(cli)$icons(git)  $fgi(cli)"
+  append prompt "$bg(gitlocal)$icons(powerline)"
+  append prompt " $fg(gituntracked)$icons(gituntracked) $fg(gituntrackedc)$untracked"
+  append prompt " $fg(gitlocalcounters)$icons(powerline2)"
+  append prompt " $fg(gitmodified)$icons(gitmodified) $fg(gitmodifiedc)$modified"
+  append prompt " $fg(gitlocalcounters)$icons(powerline2)"
+  append prompt " $fg(gitdeleted)$icons(gitdeleted) $fg(gitdeletedc)$deleted $fgi(gitlocal)"
+  append prompt "$bg(gitcommit)$icons(powerline)"
+  append prompt " $fg(gitcachedplus)$icons(gitplus)$fg(gitcachedplusc) $cachedplus"
+  append prompt " $fg(gitcommitslash1)$icons(powerline2)"
+  append prompt " $fg(gitcachedminus)$icons(gitminus)$fg(gitcachedminusc) $cachedminus"
+  append prompt " $fg(gitcommitslash2)$icons(powerline2)"
+  if {$inprogress eq ""} {
+    append prompt " $fg(gitcommit)$icons(gitcommit) $fgi(gitcommit)"
+  } else {
+    append prompt " $fg(gitcommitcached)$icons(gitinprogress) $fg(gitcommitready)$inprogress $fgi(gitcommit)"
+  }
+  append prompt "$bg(gitremote)$icons(powerline)"
+  if {$detached} {
+    append prompt " $fg(gitremoteaction)$icons(gitdetached)"
+  } else {
+    append prompt " $fg(gitremote)$behind $fg(gitremoteaction)$gitaction $fg(gitremote)$ahead"
+    append prompt " $icons(powerline2) $branch"
+  }
+  if {$showhash} {
+    append prompt " $fg(gitremote)$icons(powerline2) $hashs"
+  }
+  if {$hastag} {
+    append prompt " $fg(gitremote)$icons(powerline2) $icons(gittag) $tag"
+  }
+
+  append prompt " $fgi(gitremote)"
+  append prompt "$ansi(bgreset)$icons(powerline)\\n"
+}
+append prompt "$bg(cli)  $fgi(cli)"
+append prompt "$bg(host)$icons(powerline)$fg(host) $icons(host) $hostname $fgi(host)"
+append prompt "$bg(date)$icons(powerline)$fg(date) $icons(date) [clock format $now -format %Y$icons(powerline2)%m$icons(powerline2)%d$icons(powerline2)%a] $fgi(date)"
+append prompt "$bg(time)$icons(powerline)$fg(time) $icons(time) [clock format $now -format %R] $fgi(time)"
+append prompt "$bg(path)$icons(powerline)$fg(path) $icons(path) $path $fgi(path)"
+append prompt "$ansi(bgreset)$icons(powerline)\\n"
+append prompt "$bg(cli)$fg(cli)$icons(cli)$ansi(bgreset)$fgi(cli)$icons(powerline)$ansi(fgreset) "
 puts -nonewline $prompt
