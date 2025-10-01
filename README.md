@@ -1,5 +1,3 @@
-# _[moved to upvar.fun/fancybash](https://upvar.fun/fancybash)_ #
-
 fancybash
 ================
 
